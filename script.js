@@ -41,7 +41,9 @@ function loadSong(i) {
     title.textContent = songs[i].title;
     cover.src = songs[i].cover;
     progress.value = 0;
+    document.body.style.setProperty('--bg-image', `url('${songs[i].cover}')`);
 }
+
 
 
 function formatTime(time) {
