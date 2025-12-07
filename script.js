@@ -4,7 +4,7 @@ const songs = [
         title: "Let it happen",
         file: "songs/song1.mp3",
         cover: "cover/cover1.jpeg",
-        playCount: 0
+        playCount: 0 
     },
     {
         id: 1,
@@ -19,11 +19,12 @@ const songs = [
         file: "songs/song3.mp3",
         cover: "cover/cover3.webp",
         playCount: 0
-    },
+    }
 ];
 
 let index = 0;
 let isPlaying = false;
+
 const audio = new Audio(songs[index].file);
 const title = document.getElementById("song-title");
 const cover = document.getElementById("cover");
@@ -33,25 +34,6 @@ const durTime = document.getElementById("duration");
 const volSlider = document.getElementById("volume");
 const visualizer = document.getElementById("mini-visualizer");
 
-const STORE_KEY = 'musicPlayerPlayCounts';
-
-function loadPlayCounts() {
-    const storedCounts = localStorage.getItem(STORE_KEY);
-    if (storedCounts) {
-        const counts = JSON.parse(storedCounts);
-        songs.forEach(song => {
-            song.playCount = counts[song.id] || 0;
-        });
-    }
-}
-
-function savePlayCounts() {
-    const counts = {};
-    songs.forEach(song => {
-        counts[song.id] = song.playCount;
-    });
-    localStorage.setItem(STORE_KEY, JSON.stringify(counts));
-}
 
 function loadSong(i) {
     index = i;
@@ -60,6 +42,7 @@ function loadSong(i) {
     cover.src = songs[i].cover;
     progress.value = 0;
 }
+
 
 function formatTime(time) {
     if (isNaN(time)) return "0:00";
@@ -77,13 +60,16 @@ audio.ontimeupdate = () => {
     currTime.textContent = formatTime(audio.currentTime);
 };
 
+
 audio.onended = () => {
     const currentSong = songs[index];
     currentSong.playCount += 1;
-    savePlayCounts();
+    
     buildTopSongsList();
+    
     document.getElementById("next").click(); 
 };
+
 
 document.getElementById("play").onclick = () => {
     if (isPlaying) {
@@ -115,7 +101,6 @@ document.getElementById("prev").onclick = () => {
     index = (index - 1 + songs.length) % songs.length;
     loadSong(index);
     audio.play();
-    document.getElementById("play").innerHTML = '<span class="material-symbols-rounded">pause</span>';
     isPlaying = true;
     cover.classList.add('active');
     if (visualizer) visualizer.classList.add('active');
@@ -148,21 +133,23 @@ songs.forEach((s, i) => {
     list.appendChild(li);
 });
 
+
 function buildTopSongsList() {
     const topList = document.getElementById("top-played-list");
     if (!topList) return; 
     topList.innerHTML = ''; 
     const sortedSongs = [...songs].sort((a, b) => b.playCount - a.playCount);
+
     sortedSongs.slice(0, 5).forEach((s, i) => {
         const li = document.createElement("li");
         li.classList.add("top-song");
+
         const rankText = (i === 0) 
             ? '<span class="material-symbols-rounded crown-icon">trophy</span>' 
             : `${i + 1}.`;
-
         const originalIndex = songs.findIndex(song => song.id === s.id);
-
-        const countDisplay = s.playCount > 0 ? `<small style="opacity: 0.6; margin-left: auto;">(${s.playCount} Time)</small>` : '';
+    
+        const countDisplay = s.playCount > 0 ? `<small style="opacity: 0.6; margin-left: auto;">(${s.playCount} plays)</small>` : '';
 
 
         li.innerHTML = `
@@ -173,8 +160,8 @@ function buildTopSongsList() {
         li.onclick = () => {
             loadSong(originalIndex);
             audio.play();
-            document.getElementById("play").innerHTML = '<span class="material-symbols-rounded">pause</span>';
             isPlaying = true;
+            document.getElementById("play").innerHTML = '<span class="material-symbols-rounded">pause</span>';
             cover.classList.add('active');
             if (visualizer) visualizer.classList.add('active');
         };
@@ -183,6 +170,5 @@ function buildTopSongsList() {
     });
 }
 
-loadPlayCounts();
 loadSong(index); 
-buildTopSongsList(); 
+buildTopSongsList();
