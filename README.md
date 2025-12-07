@@ -26,5 +26,5 @@ This is a **front-end only project** and does not require any complex build tool
 ### Clone the Repository
 
 ```bash
-git clone [YOUR_REPOSITORY_URL]
+git clone https://kashif2004k.github.io/Music-player/
 cd Music-player
